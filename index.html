@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flex Box w/ Transitions</title>
+  <link href='https://fonts.googleapis.com/css?family=Amatic+SC' rel='stylesheet' type='text/css'>
+</head>
+<body>
+  <style>
+    html {
+      box-sizing: border-box;
+      background: #ffc600;
+      font-family: 'helvetica neue';
+      font-size: 20px;
+      font-weight: 200;
+    }
+    
+    body {
+      margin: 0;
+    }
+    
+    *, *:before, *:after {
+      box-sizing: inherit;
+    }
+
+    .panels {
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex; 
+      /* 1st step: 
+      Gets the Panels side by side */
+    }
+
+    .panel {
+      background: #6B0F9C;
+      box-shadow: inset 0 0 0 5px rgba(255,255,255,0.1);
+      color: white;
+      text-align: center;
+      align-items: center;
+      /* Safari transitionend event.propertyName === flex */
+      /* Chrome + FF transitionend event.propertyName === flex-grow */
+      transition:
+        font-size 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+        flex 0.7s cubic-bezier(0.61,-0.19, 0.7,-0.11),
+        background 0.2s;
+      /* Transition is what allows the "animation" to happen where the words come from the top of the screen */
+      font-size: 20px;
+      background-size: cover;
+      background-position: center;
+      flex: 1; 
+      /* 
+      This distributes all the space amongst each other evenly so they are not stacked on the side of the browser  */
+      justify-content: center;
+      align-items: center;
+      display: flex; 
+      /* 
+      This is what makes the individual panels flex containers and made what is inside the panels flex */
+      flex-direction: column; 
+      /* 
+      Flex automatically goes left to right, this changes it to columns to make it even across the page */
+    }
+
+    .panel1 { background-image:url(https://pbs.twimg.com/media/EKqjuhYWkAAgJBe.jpg); }
+    .panel2 { background-image:url(https://blogger.googleusercontent.com/img/a/AVvXsEhp_njxGotGD62xCW13vBU-TjshyOdzY-1sOrRv6pepgcmsdC638wmsisFVolZaoxrsVjyBolssR81mgn8TbTpT9_vVcko9u4fPMXCWxYmvnCVQX5xvCKw2DVj-Gf8lfFxmtg48rUQ8wg4k01xSa7Vo2UJn0bB7twAGEgLmfsjEKR_n-zPKfkYzcVoQ=s16000); }
+    .panel3 { background-image:url(https://ih1.redbubble.net/image.2356380373.1136/raf,750x1000,075,t,000000:44f0b734a5.jpg); }
+    .panel4 { background-image:url(https://cdn.inprnt.com/thumbs/2b/e6/2be67181a932fd26b9df79e87c5ca666.jpg?response-cache-control=max-age=2628000); }
+    .panel5 { background-image:url(https://i.pinimg.com/736x/b4/33/61/b4336194140437ed60e5854f45b7d6bf.jpg); }
+
+    /* Flex Items */
+    .panel > * {
+      margin: 0;
+      width: 100%;
+      transition: transform 0.5s;
+      flex: 1 0 auto;
+      /* The below 3 lines of code centers everthing inside the panels perfectly */
+      display: flex;
+      justify-content: center;
+      align-items: center; 
+    }
+
+    .panel > *:first-child {transform: translateY(-100%); } 
+    /*^ This takes the top text and takes it off screen ^*/
+    .panel.open-active > *:first-child {transform: translateY(0); }
+    .panel > *:last-child {transform: translateY(100%); }
+    /*^ This brings it back on screen ^*/
+    .panel.open-active > *:last-child {transform: translateY(0); }
+
+    .panel p {
+      text-transform: uppercase;
+      font-family: 'Amatic SC', cursive;
+      text-shadow: 0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
+      font-size: 2em;
+    }
+    
+    .panel p:nth-child(2) {
+      font-size: 4em;
+    }
+
+    .panel.open {
+      flex: 5; 
+      /* When the panel is clicked and opened it will be larger by 5x since the panels flex are set as 1 */
+      font-size: 40px;
+    }
+
+  </style>
+
+
+  <div class="panels">
+    <div class="panel panel1">
+      <p>Akatsuki</p>
+      <p>Pain</p>
+      <p>Clan</p>
+    </div>
+    <div class="panel panel2">
+      <p>Jujutsu</p>
+      <p>Saturo</p>
+      <p>Kaisen</p>
+    </div>
+    <div class="panel panel3">
+      <p>Demon</p>
+      <p>Rengoku</p>
+      <p>Slayer</p>
+    </div>
+    <div class="panel panel4">
+      <p>Attack</p>
+      <p>Levi</p>
+      <p>On Titan</p>
+    </div>
+    <div class="panel panel5">
+      <p>Dragon</p>
+      <p>Beerus</p>
+      <p>Ball Z</p>
+    </div>
+  </div>
+
+  <script>
+    const panels = document.querySelectorAll('.panel');
+    // This gives us a node list of all the different individual panels that we have. This is why we use panel and not panels.
+
+    function toggleOpen() {
+      this.classList.toggle('open');
+    } //toggle function that makes it open
+
+    function toggleActive(e) {
+      if(e.propertyName.includes('flex')) {
+        this.classList.toggle('open-active');
+      }
+    }
+    // This listens for a click on each panel, when someone clicks it will open it, and will transition the text back in from the top and the bottom.
+
+    panels.forEach(panel => panel.addEventListener('click', toggleOpen)) 
+    // this listens for when it is clicked and runs the toggle function when the event happens. When you click it adds the open and when you click agin it removes it making it larger or smaller.
+
+    panels.forEach(panel => panel.addEventListener('transitionend', toggleActive)) 
+
+  </script>
+
+
+
+</body>
+</html>
